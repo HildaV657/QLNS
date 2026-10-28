@@ -1,0 +1,100 @@
+// Chương trình chính - Quản lý nhân sự (C++ OOP, console)
+// Biên dịch: g++ -std=c++17 main.cpp -o main.exe
+// Lưu tất cả file ở dạng UTF-8. Nên chạy trong Windows Terminal.
+#include "ConsoleUI.cpp"
+#include "DanhSachNhanVien.cpp"
+using namespace std;
+
+template <class T>
+void themNhanVien(DanhSachNhanVien& ql, const string& tieuDe) {
+    UI::xoaManHinh();
+    cout << "\n  " << UI::VANG << "** " << tieuDe << " **" << UI::RESET << "\n\n";
+    string ma;
+    while (true) {
+        ma = UI::docChuoi("Mã nhân viên: ");
+        if (!ql.timTheoMa(ma)) break;
+        cout << UI::DO << "  ! Mã đã tồn tại, nhập mã khác.\n" << UI::RESET;
+    }
+    T* p = new T();
+    p->setMaNV(ma);
+    cin >> *p; // operator>> gọi nhap() (đa hình)
+    ql.them(p);
+    cout << UI::XANH << "\n  ✓ Đã thêm: " << *p << UI::RESET << "\n";
+    UI::tamDung();
+}
+
+int main() {
+    UI::khoiTao();
+    DanhSachNhanVien ql;
+
+    UI::xoaManHinh();
+    cout << "\n  " << UI::VANG << "** QUẢN LÝ NHÂN SỰ **" << UI::RESET << "\n\n";
+    ql.setThang((int)UI::docSo("Nhập tháng tính lương (1-12): ", 1, 12));
+
+    vector<string> menu = {
+        "Thêm nhân viên văn phòng",
+        "Thêm nhân viên sản xuất",
+        "Thêm quản lý",
+        "Hiển thị danh sách nhân viên",
+        "Xem chi tiết 1 nhân viên",
+        "Tìm nhân viên theo từ khóa",
+        "Sắp xếp theo lương giảm dần",
+        "Xóa nhân viên",
+        "Thống kê lương",
+        "Đổi tháng tính lương",
+        "Nạp dữ liệu mẫu",
+        "Thoát"};
+
+    while (true) {
+        string phu = "Tháng " + to_string(ql.getThang()) + " | Số nhân viên: " + to_string(ql.soLuong());
+        int c = UI::chonMenu("QUẢN LÝ NHÂN SỰ", phu, menu);
+        UI::xoaManHinh();
+
+        if (c == 0) themNhanVien<NhanVienVanPhong>(ql, "THÊM NHÂN VIÊN VĂN PHÒNG");
+        else if (c == 1) themNhanVien<NhanVienSanXuat>(ql, "THÊM NHÂN VIÊN SẢN XUẤT");
+        else if (c == 2) themNhanVien<QuanLy>(ql, "THÊM QUẢN LÝ");
+        else if (c == 3) {
+            ql.inTatCa();
+            UI::tamDung();
+        } else if (c == 4) {
+            string ma = UI::docChuoi("\n  Nhập mã nhân viên: ");
+            NhanVien* p = ql.timTheoMa(ma);
+            if (!p) cout << UI::DO << "\n  ! Không tìm thấy nhân viên.\n" << UI::RESET;
+            else {
+                cout << "\n  " << UI::VANG << "** THÔNG TIN NHÂN VIÊN **" << UI::RESET << "\n\n";
+                p->hienThiThongTin(ql.getThang()); // đa hình
+            }
+            UI::tamDung();
+        } else if (c == 5) {
+            string tk = UI::docChuoi("\n  Tìm tất cả nhân viên liên quan đến từ khóa: ");
+            auto kq = ql.timTheoTuKhoa(tk);
+            if (kq.empty()) cout << UI::DO << "\n  ! Không có kết quả.\n" << UI::RESET;
+            else ql.inBang(kq, "KẾT QUẢ TÌM KIẾM");
+            UI::tamDung();
+        } else if (c == 6) {
+            ql.sapXepLuongGiam();
+            ql.inTatCa();
+            UI::tamDung();
+        } else if (c == 7) {
+            string ma = UI::docChuoi("\n  Nhập mã nhân viên cần xóa: ");
+            if (ql.xoa(ma)) cout << UI::XANH << "\n  ✓ Đã xóa.\n" << UI::RESET;
+            else cout << UI::DO << "\n  ! Không tìm thấy nhân viên.\n" << UI::RESET;
+            UI::tamDung();
+        } else if (c == 8) {
+            ql.thongKe();
+            UI::tamDung();
+        } else if (c == 9) {
+            ql.setThang((int)UI::docSo("\n  Nhập tháng mới (1-12): ", 1, 12));
+        } else if (c == 10) {
+            if (ql.timTheoMa("VP01")) cout << UI::DO << "\n  ! Dữ liệu mẫu đã được nạp rồi.\n" << UI::RESET;
+            else {
+                ql.napMau();
+                cout << UI::XANH << "\n  ✓ Đã nạp 5 nhân viên mẫu.\n" << UI::RESET;
+            }
+            UI::tamDung();
+        } else break;
+    }
+    UI::xoaManHinh();
+    cout << "Tạm biệt!\n";
+    return 0;
+}
