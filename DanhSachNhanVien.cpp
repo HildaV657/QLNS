@@ -179,7 +179,7 @@ void xemLichSuXoa() const
         int stt = 1;
         for (auto p : v) 
         {
-            string mau = p->loaiNV() == "Quản lý" ? UI::TIM : p->loaiNV() == "Sản xuất" ? UI::XANH : UI::CYAN;
+            string mau = p->loaiNV() == "Quản lý" ? UI::TIM : p->loaiNV() == "Sản xuất" ? UI::HONG : UI::CYAN;
             dongBang({to_string(stt++), p->getMaNV(), p->getHoTen(), p->loaiNV(),
                       p->getNgaySinh().toString(), UI::tien(p->tinhLuong())}, mau);
         }
@@ -202,9 +202,9 @@ void xemLichSuXoa() const
         }
         UI::dong("Tổng số nhân viên", to_string(ds.size()));
         UI::dong("Văn phòng", to_string(vp), UI::CYAN);
-        UI::dong("Sản xuất", to_string(sx), UI::XANH);
+        UI::dong("Sản xuất", to_string(sx), UI::HONG);
         UI::dong("Quản lý", to_string(ql), UI::TIM);
-        UI::dong("Tổng quỹ lương", UI::tien(tongLuong()) + " VNĐ", UI::XANH);
+        UI::dong("Tổng quỹ lương", UI::tien(tongLuong()) + " VNĐ", UI::HONG);
         if (!ds.empty()) 
         {
             UI::dong("Lương trung bình", UI::tien(tongLuong() / ds.size()) + " VNĐ");
