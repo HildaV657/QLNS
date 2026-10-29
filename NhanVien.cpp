@@ -5,12 +5,14 @@
 #include "Ngay.cpp"
 using namespace std;
 
-class NhanVien {
+class NhanVien 
+{
 protected:
     string maNV, hoTen, diaChi;
     Ngay ngaySinh;
 
-    void inLuong(int thang) const {
+    void inLuong(int thang) const 
+    {
         UI::dong("Lương tháng " + to_string(thang), UI::tien(tinhLuong()) + " VNĐ", UI::XANH);
     }
 
@@ -35,13 +37,18 @@ public:
     virtual string loaiNV() const = 0;
     virtual NhanVien* clone() const = 0;
 
-    virtual void nhap() { // mã NV được nhập ở bên ngoài để kiểm tra trùng
+    virtual void nhap()
+    {
         hoTen = UI::docChuoi("Họ và tên: ");
+        if (UI::huyNhapNhanVien) return;
         ngaySinh = Ngay::doc("Ngày sinh (d/m/yyyy): ");
+        if (UI::huyNhapNhanVien) return;
         diaChi = UI::docChuoi("Địa chỉ: ");
+        if (UI::huyNhapNhanVien) return;
     }
 
-    virtual void hienThiThongTin(int thang) const {
+    virtual void hienThiThongTin(int thang) const 
+    {
         UI::dong("Mã nhân viên", maNV);
         UI::dong("Họ và tên", hoTen);
         UI::dong("Ngày sinh", ngaySinh.toString());
@@ -50,7 +57,8 @@ public:
     }
 
     friend istream& operator>>(istream& is, NhanVien& nv) { nv.nhap(); return is; }
-    friend ostream& operator<<(ostream& os, const NhanVien& nv) {
+    friend ostream& operator<<(ostream& os, const NhanVien& nv) 
+    {
         return os << nv.maNV << " - " << nv.hoTen << " (" << nv.loaiNV() << ")";
     }
 };
