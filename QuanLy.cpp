@@ -3,7 +3,8 @@
 #include "NhanVien.cpp"
 using namespace std;
 
-class QuanLy : public NhanVien {
+class QuanLy : public NhanVien 
+{
     double luongCoBan;
     double luongTrachNhiem;
 public:
@@ -22,13 +23,18 @@ public:
     string loaiNV() const override { return "Quản lý"; }
     NhanVien* clone() const override { return new QuanLy(*this); }
 
-    void nhap() override {
+    void nhap() override
+    {
         NhanVien::nhap();
+        if (UI::huyNhapNhanVien) return;
         luongCoBan = UI::docSo("Lương cơ bản (VNĐ): ", 0);
+        if (UI::huyNhapNhanVien) return;
         luongTrachNhiem = UI::docSo("Lương trách nhiệm (VNĐ): ", 0);
-    }
+        if (UI::huyNhapNhanVien) return;
+}
 
-    void hienThiThongTin(int thang) const override {
+    void hienThiThongTin(int thang) const override 
+    {
         NhanVien::hienThiThongTin(thang);
         UI::dong("Lương cơ bản", UI::tien(luongCoBan) + " VNĐ");
         UI::dong("Lương trách nhiệm", UI::tien(luongTrachNhiem) + " VNĐ");
