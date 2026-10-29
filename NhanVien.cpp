@@ -15,7 +15,7 @@ protected:
 
     void inLuong(int thang) const 
     {
-        UI::dong("Lương tháng " + to_string(thang), UI::tien(tinhLuong()) + " VNĐ", UI::XANH);
+        UI::dong("Lương tháng " + to_string(thang), UI::tien(tinhLuong()) + " VNĐ", UI::HONG);
     }
 
     static string sach(string s) // bỏ TAB / xuống dòng để không phá định dạng file
@@ -73,7 +73,7 @@ public:
         UI::dong("Họ và tên", hoTen);
         UI::dong("Ngày sinh", ngaySinh.toString());
         UI::dong("Địa chỉ", diaChi);
-        UI::dong("Loại nhân viên", loaiNV(), UI::CYAN);
+        UI::dong("Loại nhân viên", loaiNV(), UI::BE);
     }
 
     friend istream& operator>>(istream& is, NhanVien& nv) { nv.nhap(); return is; }
