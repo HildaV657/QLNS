@@ -33,6 +33,10 @@ public:
     double tinhLuong() const override { return luongCung() + luongOT(); }
     string loaiNV() const override { return "Văn phòng"; }
     NhanVien* clone() const override { return new NhanVienVanPhong(*this); }
+    string ghiFile() const override
+    {
+        return ghiChung("VP") + "\t" + to_string(soNgayLamViec) + "\t" + so(donGiaNgay) + "\t" + so(soGioOT) + "\t" + so(heSoOT);
+    }
 
     void nhap() override
     {

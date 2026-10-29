@@ -30,6 +30,10 @@ public:
     double tinhLuong() const override { return spTrongDinhMuc() * donGiaSP + spVuotDinhMuc() * donGiaVuot; }
     string loaiNV() const override { return "Sản xuất"; }
     NhanVien* clone() const override { return new NhanVienSanXuat(*this); }
+    string ghiFile() const override
+    {
+        return ghiChung("SX") + "\t" + to_string(soSanPham) + "\t" + so(donGiaSP) + "\t" + so(donGiaVuot);
+    }
 
     void nhap() override
     {

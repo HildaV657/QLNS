@@ -22,6 +22,10 @@ public:
     double tinhLuong() const override { return luongCoBan + luongTrachNhiem; }
     string loaiNV() const override { return "Quản lý"; }
     NhanVien* clone() const override { return new QuanLy(*this); }
+    string ghiFile() const override
+    {
+        return ghiChung("QL") + "\t" + so(luongCoBan) + "\t" + so(luongTrachNhiem);
+    }
 
     void nhap() override
     {

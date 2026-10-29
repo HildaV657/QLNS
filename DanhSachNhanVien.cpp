@@ -212,6 +212,109 @@ void xemLichSuXoa() const
         }
     }
 
+    // ================= LƯU / ĐỌC FILE TXT =================
+    // Mỗi nhân viên 1 dòng, các trường cách nhau bằng TAB:
+    //   VP <mã> <tên> <d/m/yyyy> <địa chỉ> <số ngày> <đơn giá ngày> <giờ OT> <hệ số OT>
+    //   SX <mã> <tên> <d/m/yyyy> <địa chỉ> <số SP> <đơn giá SP> <đơn giá vượt>
+    //   QL <mã> <tên> <d/m/yyyy> <địa chỉ> <lương cơ bản> <lương trách nhiệm>
+    // Dòng trống hoặc bắt đầu bằng '#' sẽ bị bỏ qua.
+    bool luuFile(const string& duongDan) const
+    {
+        ofstream f(duongDan, ios::trunc);
+        if (!f.is_open()) return false;
+        f << "# QLNS - danh sach nhan vien (cac truong cach nhau bang TAB, luu UTF-8)\n";
+        f << "# VP: ma, ten, ngay sinh, dia chi, so ngay, don gia ngay, gio OT, he so OT\n";
+        f << "# SX: ma, ten, ngay sinh, dia chi, so SP, don gia SP, don gia vuot\n";
+        f << "# QL: ma, ten, ngay sinh, dia chi, luong co ban, luong trach nhiem\n";
+        for (auto p : ds) f << p->ghiFile() << '\n';
+        f.flush();
+        return (bool)f;
+    }
+
+private:
+    static vector<string> tach(const string& dong)
+    {
+        vector<string> v;
+        string t;
+        stringstream ss(dong);
+        while (getline(ss, t, '\t')) v.push_back(t);
+        if (!dong.empty() && dong.back() == '\t') v.push_back("");
+        return v;
+    }
+    static bool docSoThuc(const string& s, double& v)
+    {
+        string c = UI::cat(s);
+        if (c.empty()) return false;
+        char* e = nullptr;
+        v = strtod(c.c_str(), &e);
+        return *e == '\0' && isfinite(v) && v >= 0;
+    }
+    static bool docNgay(const string& s, Ngay& n)
+    {
+        string t = UI::cat(s);
+        for (auto& c : t) if (c == '/' || c == '-') c = ' ';
+        istringstream ss(t);
+        int d, m, y;
+        if (!(ss >> d >> m >> y)) return false;
+        string du;
+        if (ss >> du) return false;
+        if (!Ngay::hopLe(d, m, y)) return false;
+        n = Ngay(d, m, y);
+        return true;
+    }
+    // Tạo nhân viên từ 1 dòng; trả nullptr nếu dòng sai định dạng
+    static NhanVien* taoTuDong(const vector<string>& f)
+    {
+        if (f.size() < 7) return nullptr;
+        string loai = UI::cat(f[0]), ma = UI::cat(f[1]), ten = UI::cat(f[2]), dc = UI::cat(f[4]);
+        if (ma.empty() || ten.empty() || dc.empty()) return nullptr;
+        Ngay ns;
+        if (!docNgay(f[3], ns)) return nullptr;
+        vector<double> x;
+        for (size_t i = 5; i < f.size(); i++)
+        {
+            double v;
+            if (!docSoThuc(f[i], v)) return nullptr;
+            x.push_back(v);
+        }
+        if (loai == "VP" && f.size() == 9 && x[0] <= 31 && x[0] == floor(x[0]) && x[3] >= 1)
+            return new NhanVienVanPhong(ma, ten, ns, dc, (int)x[0], x[1], x[2], x[3]);
+        if (loai == "SX" && f.size() == 8 && x[0] == floor(x[0]))
+            return new NhanVienSanXuat(ma, ten, ns, dc, (int)x[0], x[1], x[2]);
+        if (loai == "QL" && f.size() == 7)
+            return new QuanLy(ma, ten, ns, dc, x[0], x[1]);
+        return nullptr;
+    }
+
+public:
+    // Đọc file, thêm vào danh sách (bỏ qua mã trùng / dòng lỗi).
+    // Trả về false nếu không mở được file.
+    bool docFile(const string& duongDan, int& themDuoc, int& trung, int& loi)
+    {
+        themDuoc = trung = loi = 0;
+        ifstream f(duongDan);
+        if (!f.is_open()) return false;
+        string dong;
+        bool dau = true;
+        while (getline(f, dong))
+        {
+            if (dau) // bỏ BOM UTF-8 nếu có
+            {
+                dau = false;
+                if (dong.size() >= 3 && (unsigned char)dong[0] == 0xEF && (unsigned char)dong[1] == 0xBB && (unsigned char)dong[2] == 0xBF)
+                    dong.erase(0, 3);
+            }
+            if (!dong.empty() && dong.back() == '\r') dong.pop_back();
+            if (UI::cat(dong).empty() || UI::cat(dong)[0] == '#') continue;
+            NhanVien* p = taoTuDong(tach(dong));
+            if (!p) { loi++; continue; }
+            if (timTheoMa(p->getMaNV())) { delete p; trung++; continue; }
+            them(p);
+            themDuoc++;
+        }
+        return true;
+    }
+
     void napMau() 
     {
         them(new NhanVienVanPhong("VP01", "Nguyễn Thành Thông", Ngay(7, 4, 1997), "Quận 5, TP.HCM", 26, 400000, 10));

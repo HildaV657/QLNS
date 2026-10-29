@@ -1,6 +1,8 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include <sstream>
+#include <iomanip>
 #include "ConsoleUI.cpp"
 #include "Ngay.cpp"
 using namespace std;
@@ -14,6 +16,22 @@ protected:
     void inLuong(int thang) const 
     {
         UI::dong("Lương tháng " + to_string(thang), UI::tien(tinhLuong()) + " VNĐ", UI::XANH);
+    }
+
+    static string sach(string s) // bỏ TAB / xuống dòng để không phá định dạng file
+    {
+        for (auto& c : s) if (c == '\t' || c == '\n' || c == '\r') c = ' ';
+        return s;
+    }
+    static string so(double v)
+    {
+        ostringstream os;
+        os << setprecision(15) << v;
+        return os.str();
+    }
+    string ghiChung(const string& ma) const
+    {
+        return ma + "\t" + sach(maNV) + "\t" + sach(hoTen) + "\t" + ngaySinh.toString() + "\t" + sach(diaChi);
     }
 
 public:
@@ -36,6 +54,8 @@ public:
     virtual double tinhLuong() const = 0;
     virtual string loaiNV() const = 0;
     virtual NhanVien* clone() const = 0;
+    // Ghi 1 nhân viên thành 1 dòng văn bản (các trường cách nhau bằng TAB)
+    virtual string ghiFile() const = 0;
 
     virtual void nhap()
     {
