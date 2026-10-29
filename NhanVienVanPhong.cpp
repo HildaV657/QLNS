@@ -3,7 +3,8 @@
 #include "NhanVien.cpp"
 using namespace std;
 
-class NhanVienVanPhong : public NhanVien {
+class NhanVienVanPhong : public NhanVien 
+{
     int soNgayLamViec;
     double donGiaNgay;
     double soGioOT;
@@ -33,15 +34,22 @@ public:
     string loaiNV() const override { return "Văn phòng"; }
     NhanVien* clone() const override { return new NhanVienVanPhong(*this); }
 
-    void nhap() override {
+    void nhap() override
+    {
         NhanVien::nhap();
+        if (UI::huyNhapNhanVien) return;
         soNgayLamViec = (int)UI::docSo("Số ngày làm việc (0-31): ", 0, 31);
+        if (UI::huyNhapNhanVien) return;
         donGiaNgay = UI::docSo("Đơn giá ngày (VNĐ): ", 0);
+        if (UI::huyNhapNhanVien) return;
         soGioOT = UI::docSo("Số giờ OT: ", 0);
+        if (UI::huyNhapNhanVien) return;
         heSoOT = UI::docSo("Hệ số OT (vd 1.5): ", 1);
+        if (UI::huyNhapNhanVien) return;
     }
 
-    void hienThiThongTin(int thang) const override {
+    void hienThiThongTin(int thang) const override 
+    {
         NhanVien::hienThiThongTin(thang);
         UI::dong("Số ngày làm việc", to_string(soNgayLamViec));
         UI::dong("Đơn giá ngày", UI::tien(donGiaNgay) + " VNĐ");
