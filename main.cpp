@@ -42,7 +42,7 @@ void themNhanVien(DanhSachNhanVien& ql, const string& tieuDe)
         return;
     }
     ql.them(p);
-    cout << UI::XANH << "\n  ✓ Đã thêm: " << *p << UI::RESET << "\n";
+    cout << UI::HONG << "\n  ✓ Đã thêm: " << *p << UI::RESET << "\n";
     UI::dangNhapNhanVien = false;
     UI::huyNhapNhanVien = false;
     UI::tamDung();
@@ -135,7 +135,7 @@ int main()
             string LyDo = UI::docChuoi("\n  Nhập lý do xóa nhân viên: ");
             if (ql.xoa(ma, LyDo)) 
             {
-                cout << UI::XANH << "\n  ✓ Đã xóa.\n"  << "\n Lý Do: " << LyDo  << "\n" << UI::RESET;
+                cout << UI::HONG << "\n  ✓ Đã xóa.\n"  << "\n Lý Do: " << LyDo  << "\n" << UI::RESET;
             }
             else cout << UI::DO << "\n  ! Không tìm thấy nhân viên.\n" << UI::RESET;
             UI::tamDung();
@@ -161,7 +161,7 @@ int main()
             else 
             {
                 ql.napMau();
-                cout << UI::XANH << "\n  ✓ Đã nạp 5 nhân viên mẫu.\n" << UI::RESET;
+                cout << UI::HONG << "\n  ✓ Đã nạp 5 nhân viên mẫu.\n" << UI::RESET;
             }
             UI::tamDung();
         } 
@@ -170,7 +170,7 @@ int main()
             string f = hoiTenFile("Lưu ra file");
             if (!f.empty())
             {
-                if (ql.luuFile(f)) cout << UI::XANH << "\n  ✓ Đã lưu " << ql.soLuong() << " nhân viên vào \"" << f << "\".\n" << UI::RESET;
+                if (ql.luuFile(f)) cout << UI::HONG << "\n  ✓ Đã lưu " << ql.soLuong() << " nhân viên vào \"" << f << "\".\n" << UI::RESET;
                 else cout << UI::DO << "\n  ! Không thể ghi file \"" << f << "\".\n" << UI::RESET;
             }
             UI::tamDung();
@@ -185,7 +185,7 @@ int main()
                     cout << UI::DO << "\n  ! Không mở được file \"" << f << "\" (chưa có file? hãy lưu trước).\n" << UI::RESET;
                 else
                 {
-                    cout << UI::XANH << "\n  ✓ Đã nạp " << them << " nhân viên từ \"" << f << "\".\n" << UI::RESET;
+                    cout << UI::HONG << "\n  ✓ Đã nạp " << them << " nhân viên từ \"" << f << "\".\n" << UI::RESET;
                     if (trung) cout << UI::VANG << "  ! Bỏ qua " << trung << " nhân viên trùng mã.\n" << UI::RESET;
                     if (loi) cout << UI::DO << "  ! Bỏ qua " << loi << " dòng sai định dạng.\n" << UI::RESET;
                 }
