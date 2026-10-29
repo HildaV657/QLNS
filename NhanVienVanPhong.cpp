@@ -32,7 +32,7 @@ public:
 
     double luongCung() const { return soNgayLamViec * donGiaNgay; }
     double luongOT() const { return soGioOT * (donGiaNgay / GIO_CHUAN) * heSoOT; }
-    double tienPhatNghi () const { return soNgayNghi * 50000;}
+    double tienPhatNghi() const { return max(0, soNgayNghi - 3) * 50000.0;}
 
     double tinhLuong() const override { return luongCung() + luongOT() - tienPhatNghi (); }
     string loaiNV() const override { return "Văn phòng"; }
