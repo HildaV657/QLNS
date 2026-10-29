@@ -51,7 +51,7 @@ public:
 
     static Ngay doc(const string& nhan){
         while (true){
-            cout << UI::CYAN << nhan << UI::RESET;
+            cout << UI::BE << nhan << UI::RESET;
             string s;
             getline(cin, s);
             for (auto& c : s) if (c == '/' || c == '-') c = ' ';
