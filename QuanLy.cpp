@@ -43,7 +43,7 @@ public:
         if (UI::huyNhapNhanVien) return;
         luongTrachNhiem = UI::docSo("Lương trách nhiệm (VNĐ): ", 0);
         if (UI::huyNhapNhanVien) return;
-        soNgayNghi = (int)UI::docSo("Số Ngày Nghỉ trong : ", 0, 31);
+        soNgayNghi = (int)UI::docSo("Số Ngày Nghỉ trong tháng: ", 0, 31);
         if (UI::huyNhapNhanVien) return;
     }
 
@@ -56,7 +56,7 @@ public:
     
         if (soNgayNghi > 1) 
         {
-            UI::dong("Tiền trách nhiệm bị trừ",
+            UI::dong("Tiền phạt",
                      UI::tien(luongTrachNhiem * 0.5) + " VNĐ");
         } 
         else 
