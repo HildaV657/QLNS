@@ -18,10 +18,10 @@ using namespace std;
 namespace UI 
 {
     // Mã màu ANSI (Windows 10+ hỗ trợ sau khi bật Virtual Terminal)
-    const string RESET = "\033[0m", DO = "\033[91m", XANH = "\033[92m", VANG = "\033[93m",
-                 XANH_DUONG = "\033[94m", TIM = "\033[95m", CYAN = "\033[96m",
+    const string RESET = "\033[0m", DO = "\033[91m", XANH = "\033[38;2;208;0;118m", VANG = "\033[93m",
+                 XANH_DUONG = "\033[94m", TIM = "\033[38;2;92;67;137m", CYAN = "\033[38;2;254;235;211m",
                  TRANG = "\033[97m", XAM = "\033[90m",
-                 CHON = "\033[30;106m"; // chữ đen, nền cyan = mục đang chọn
+                 CHON = "\033[97;48;2;229;6;107m"; // chữ trắng, nền hồng = mục đang chọn
 
     static bool dangNhapNhanVien = false;
     static bool huyNhapNhanVien = false;
