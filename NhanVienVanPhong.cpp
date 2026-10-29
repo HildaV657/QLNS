@@ -13,26 +13,26 @@ class NhanVienVanPhong : public NhanVien
     static const int GIO_CHUAN = 8; // 1 ngày công = 8 giờ
 public:
     NhanVienVanPhong(const string& ma = "", const string& ten = "", const Ngay& ns = Ngay(), const string& dc = "",
-                     int ngay = 0,int soNgaynghi = 0 ,double donGia = 0, double ot = 0, double heSo = 1.5)
+                     int ngay = 0,int soNgayNghi = 0 ,double donGia = 0, double ot = 0, double heSo = 1.5)
         : NhanVien(ma, ten, ns, dc), soNgayLamViec(ngay), donGiaNgay(donGia), soGioOT(ot), heSoOT(heSo), soNgayNghi(soNgayNghi) {}
     NhanVienVanPhong(const NhanVienVanPhong& o)
         : NhanVien(o), soNgayLamViec(o.soNgayLamViec), donGiaNgay(o.donGiaNgay), soGioOT(o.soGioOT), heSoOT(o.heSoOT), soNgayNghi (o.soNgayNghi) {}
     ~NhanVienVanPhong() {}
 
     int getSoNgayLamViec() const { return soNgayLamViec; }
-    int getSoNgayNghi() const { return soNgayNghi; }
+    int getsoNgayNghi() const { return soNgayNghi; }
     double getDonGiaNgay() const { return donGiaNgay; }
     double getSoGioOT() const { return soGioOT; }
     double getHeSoOT() const { return heSoOT; }
     void setSoNgayLamViec(int x) { soNgayLamViec = x; }
-    void setSoNgayNghi (int x) { soNgaynghi = x; }
+    void setsoNgayNghi (int x) { soNgayNghi = x; }
     void setDonGiaNgay(double x) { donGiaNgay = x; }
     void setSoGioOT(double x) { soGioOT = x; }
     void setHeSoOT(double x) { heSoOT = x; }
 
     double luongCung() const { return soNgayLamViec * donGiaNgay; }
     double luongOT() const { return soGioOT * (donGiaNgay / GIO_CHUAN) * heSoOT; }
-    double tienPhatNghi () const { return soNgaynghi * 50000;}
+    double tienPhatNghi () const { return soNgayNghi * 50000;}
 
     double tinhLuong() const override { return luongCung() + luongOT() - tienPhatNghi (); }
     string loaiNV() const override { return "Văn phòng"; }
@@ -47,7 +47,7 @@ public:
         NhanVien::nhap();
         if (UI::huyNhapNhanVien) return;
         soNgayLamViec = (int)UI::docSo("Số ngày làm việc (0-31): ", 0, 31);
-        soNgaynghi = (int)UI::docSo("Số ngày nghỉ trong tháng: ", 0, 31);
+        soNgayNghi = (int)UI::docSo("Số ngày nghỉ trong tháng: ", 0, 31);
         if (UI::huyNhapNhanVien) return;
         donGiaNgay = UI::docSo("Đơn giá ngày (VNĐ): ", 0);
         if (UI::huyNhapNhanVien) return;
@@ -66,7 +66,7 @@ public:
         ostringstream os;
         os << soGioOT << " giờ x " << heSoOT << " = " << UI::tien(luongOT()) << " VNĐ";
         UI::dong("Tiền OT", os.str());
-        UI::dong("Số ngày nghỉ", to_string(soNgaynghi));
+        UI::dong("Số ngày nghỉ", to_string(soNgayNghi));
         UI::dong("Phạt nghỉ vượt phép", UI::tien(tienPhatNghi()) + " VNĐ");
         inLuong(thang);
     }
