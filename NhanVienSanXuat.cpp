@@ -3,7 +3,8 @@
 #include "NhanVien.cpp"
 using namespace std;
 
-class NhanVienSanXuat : public NhanVien {
+class NhanVienSanXuat : public NhanVien 
+{
     int soSanPham;
     double donGiaSP;     // đơn giá cho sản phẩm trong định mức
     double donGiaVuot;   // đơn giá (thưởng) cho sản phẩm vượt định mức
@@ -30,14 +31,19 @@ public:
     string loaiNV() const override { return "Sản xuất"; }
     NhanVien* clone() const override { return new NhanVienSanXuat(*this); }
 
-    void nhap() override {
+    void nhap() override
+    {
         NhanVien::nhap();
+        if (UI::huyNhapNhanVien) return;
         soSanPham = (int)UI::docSo("Số sản phẩm làm được: ", 0);
+        if (UI::huyNhapNhanVien) return;
         donGiaSP = UI::docSo("Đơn giá sản phẩm (50 đầu tiên): ", 0);
+        if (UI::huyNhapNhanVien) return;
         donGiaVuot = UI::docSo("Đơn giá sản phẩm từ 51 trở đi: ", 0);
+        if (UI::huyNhapNhanVien) return;
     }
-
-    void hienThiThongTin(int thang) const override {
+    void hienThiThongTin(int thang) const override 
+    {
         NhanVien::hienThiThongTin(thang);
         UI::dong("Tổng số sản phẩm", to_string(soSanPham));
         UI::dong("SP trong định mức", to_string(spTrongDinhMuc()) + " x " + UI::tien(donGiaSP) + " VNĐ");
