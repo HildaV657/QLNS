@@ -85,10 +85,61 @@ namespace UI
         return (am ? "-" : "") + kq;
     }
 
-    inline string thuong(string s)
+    // Đổi về chữ thường, kể cả chữ có dấu tiếng Việt (Đ -> đ, Ầ -> ầ, Ư -> ư, ...)
+    inline string thuong(const string& s)
     {
-        for (auto& c : s) if ((unsigned char)c < 128) c = tolower(c);
-        return s;
+        string kq;
+        for (size_t i = 0; i < s.size();)
+        {
+            unsigned char c = s[i];
+            int len = c < 0x80 ? 1 : (c >> 5) == 6 ? 2 : (c >> 4) == 14 ? 3 : 4;
+            if (i + len > s.size()) len = 1; // chuỗi UTF-8 bị cụt: giữ nguyên byte
+            unsigned cp = c;
+            if (len == 2) cp = ((c & 0x1F) << 6) | (s[i + 1] & 0x3F);
+            else if (len == 3) cp = ((c & 0x0F) << 12) | ((s[i + 1] & 0x3F) << 6) | (s[i + 2] & 0x3F);
+            else if (len == 4) cp = 0;
+            if (len == 1) kq += (char)(c < 0x80 ? tolower(c) : c);
+            else if (len == 4) kq.append(s, i, len);
+            else
+            {
+                if (cp >= 0xC0 && cp <= 0xDE && cp != 0xD7) cp += 32;           // À-Þ -> à-þ (Â, Ê, Ô, Á, ...)
+                else if (cp >= 0x100 && cp <= 0x137 && cp % 2 == 0) cp += 1;    // Ă, Đ, Ĩ, Ũ, ...
+                else if (cp >= 0x14A && cp <= 0x177 && cp % 2 == 0) cp += 1;    // Ũ, ...
+                else if (cp == 0x1A0 || cp == 0x1AF) cp += 1;                    // Ơ, Ư
+                else if (cp >= 0x1EA0 && cp <= 0x1EF8 && cp % 2 == 0) cp += 1;   // Ạ Ả Ấ Ầ Ẩ ... Ỹ
+                if (cp < 0x800) { kq += (char)(0xC0 | (cp >> 6)); kq += (char)(0x80 | (cp & 0x3F)); }
+                else { kq += (char)(0xE0 | (cp >> 12)); kq += (char)(0x80 | ((cp >> 6) & 0x3F)); kq += (char)(0x80 | (cp & 0x3F)); }
+            }
+            i += len;
+        }
+        return kq;
+    }
+
+    // Chữ thường + bỏ dấu tiếng Việt: "Nguyễn Thị Đức" -> "nguyen thi duc" (dùng để tìm kiếm không phân biệt dấu)
+    inline string boDau(const string& s)
+    {
+        static const char* nhom[] = {
+            "aàáảãạăằắẳẵặâầấẩẫậ", "eèéẻẽẹêềếểễệ", "iìíỉĩị", "oòóỏõọôồốổỗộơờớởỡợ",
+            "uùúủũụưừứửữự", "yỳýỷỹỵ", "dđ"
+        };
+        string t = thuong(s), kq;
+        for (size_t i = 0; i < t.size();)
+        {
+            unsigned char c = t[i];
+            int len = c < 0x80 ? 1 : (c >> 5) == 6 ? 2 : (c >> 4) == 14 ? 3 : 4;
+            if (i + len > t.size()) len = 1;
+            string ch = t.substr(i, len);
+            char goc = 0;
+            if (len > 1)
+                for (auto g : nhom)
+                {
+                    string gs = g; // ký tự đầu là chữ gốc, các ký tự sau là biến thể có dấu
+                    if (gs.find(ch, 1) != string::npos) { goc = gs[0]; break; }
+                }
+            if (goc) kq += goc; else kq += ch;
+            i += len;
+        }
+        return kq;
     }
 
     inline string cat(const string& s)
@@ -103,11 +154,24 @@ namespace UI
     {
         cout << BE << nhan << RESET << flush;
 #ifdef _WIN32
+        HANDLE hIn = GetStdHandle(STD_INPUT_HANDLE);
+        DWORD cheDo = 0;
+        if (!GetConsoleMode(hIn, &cheDo)) // không phải console (vd: chuyển hướng file) -> đọc cả dòng
+        {
+            if (!getline(cin, ketQua)) return false;
+            return true;
+        }
         wstring s;
         while (true)
         {
-            // _getwch trả về 1 ký tự UTF-16 (đúng tiếng Việt có dấu); _getch chỉ trả về từng byte nên bị lỗi font
-            wint_t c = _getwch();
+            // Đọc sự kiện bàn phím thô. KHÔNG dùng _getch/_getwch vì chữ "à" (U+00E0) trùng mã 224 của phím mũi tên,
+            // làm "hoàn thành" bị nuốt mất "àn". Phím điều hướng/Shift/Ctrl có UnicodeChar = 0 nên bỏ qua dễ dàng.
+            INPUT_RECORD ir;
+            DWORD soSuKien = 0;
+            if (!ReadConsoleInputW(hIn, &ir, 1, &soSuKien) || soSuKien == 0) return false;
+            if (ir.EventType != KEY_EVENT || !ir.Event.KeyEvent.bKeyDown) continue;
+            wchar_t c = ir.Event.KeyEvent.uChar.UnicodeChar;
+            if (c == 0) continue;
             // Nhấn ESC
             if (c == 27)
             {
@@ -150,18 +214,12 @@ namespace UI
                 }
                 continue;
             }
-            // Bỏ qua các phím điều hướng
-            if (c == 0 || c == 224)
-            {
-                _getwch();
-                continue;
-            }
             // Ký tự thông thường
             if (c >= 32)
             {
-                s.push_back((wchar_t)c);
+                s.push_back(c);
                 if (c >= 0xD800 && c <= 0xDBFF) continue; // nửa đầu cặp surrogate: đợi nửa sau rồi mới in
-                wstring kyTu = (c >= 0xDC00 && c <= 0xDFFF && s.size() >= 2) ? s.substr(s.size() - 2) : wstring(1, (wchar_t)c);
+                wstring kyTu = (c >= 0xDC00 && c <= 0xDFFF && s.size() >= 2) ? s.substr(s.size() - 2) : wstring(1, c);
                 char buf[8] = {};
                 int len = WideCharToMultiByte(
                     CP_UTF8, 0, kyTu.data(), (int)kyTu.size(),
@@ -227,7 +285,7 @@ namespace UI
     // In 1 dòng "nhãn : giá trị", nhãn căn trái
     inline void dong(const string& nhan, const string& giaTri, const string& mau = TRANG)
     {
-        cout << VANG << can(nhan, 22) << RESET << ": " << mau << giaTri << RESET << "\n";
+        cout << VANG << can(nhan, 25) << RESET << ": " << mau << giaTri << RESET << "\n";
     }
 
     // ---- Phím mũi tên ----

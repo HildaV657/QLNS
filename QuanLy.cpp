@@ -55,12 +55,12 @@ public:
 
         if (soNgayNghi > 1)
         {
-            UI::dong("Tiền trách nhiệm bị trừ",
+            UI::dong("Tiền phạt",
                      UI::tien(luongTrachNhiem * 0.5) + " VNĐ");
         }
         else
         {
-            UI::dong("Tiền trách nhiệm bị trừ", "0 VNĐ");
+            UI::dong("Tiền phạt", "0 VNĐ");
         }
 
         inLuong(thang);

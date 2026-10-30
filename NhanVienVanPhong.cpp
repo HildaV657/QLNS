@@ -32,7 +32,7 @@ public:
 
     double luongCung() const { return soNgayLamViec * donGiaNgay; }
     double luongOT() const { return soGioOT * (donGiaNgay / GIO_CHUAN) * heSoOT; }
-    double tienPhatNghi() const { return soNgayNghi * 50000; }
+    double tienPhatNghi() const { return max(0, soNgayNghi - 3) * 50000.0; } // miễn phạt 3 ngày đầu, từ ngày thứ 4: 50k/ngày
 
     double tinhLuong() const override { return luongCung() + luongOT() - tienPhatNghi(); }
     string loaiNV() const override { return "Văn phòng"; }
@@ -47,6 +47,7 @@ public:
         NhanVien::nhap();
         if (UI::huyNhapNhanVien) return;
         soNgayLamViec = (int)UI::docSo("Số ngày làm việc (0-31): ", 0, 31);
+        if (UI::huyNhapNhanVien) return;
         soNgayNghi = (int)UI::docSo("Số ngày nghỉ trong tháng: ", 0, 31);
         if (UI::huyNhapNhanVien) return;
         donGiaNgay = UI::docSo("Đơn giá ngày (VNĐ): ", 0);

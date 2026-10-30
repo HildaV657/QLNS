@@ -146,15 +146,36 @@ void xemLichSuXoa() const
     file.close();
 }
 
+    // Tìm theo từ khóa:
+    //  - không phân biệt hoa/thường, có dấu hay không dấu đều được ("tran thi" tìm ra "Trần Thị")
+    //  - nhiều từ cách nhau bằng khoảng trắng: nhân viên phải chứa TẤT CẢ các từ ("thu duc" -> "Thủ Đức")
+    //  - tìm trong mã, họ tên, loại, địa chỉ, ngày sinh
+    //  - kết quả khớp đúng dấu (gõ "Đức" ra "Đức") được xếp lên trước, còn lại giữ thứ tự hiện có
     vector<NhanVien*> timTheoTuKhoa(const string& tk) const
     {
-        vector<NhanVien*> kq;
-        string k = UI::thuong(tk);
+        vector<string> tuKhoa, tuKhoaCoDau;
+        {
+            istringstream a(UI::boDau(tk)), b(UI::thuong(tk));
+            string w;
+            while (a >> w) tuKhoa.push_back(w);
+            while (b >> w) tuKhoaCoDau.push_back(w);
+        }
+        vector<pair<int, NhanVien*>> khop; // (số từ khớp đúng dấu, nhân viên)
+        if (tuKhoa.empty()) return {};
         for (auto p : ds)
         {
-            string gop = UI::thuong(p->getMaNV() + " " + p->getHoTen() + " " + p->loaiNV() + " " + p->getDiaChi());
-            if (gop.find(k) != string::npos) kq.push_back(p);
+            string goc = p->getMaNV() + " " + p->getHoTen() + " " + p->loaiNV() + " " + p->getDiaChi() + " " + p->getNgaySinh().toString();
+            string khongDau = UI::boDau(goc), coDau = UI::thuong(goc);
+            bool du = true;
+            for (auto& w : tuKhoa) if (khongDau.find(w) == string::npos) { du = false; break; }
+            if (!du) continue;
+            int diem = 0;
+            for (auto& w : tuKhoaCoDau) if (coDau.find(w) != string::npos) diem++;
+            khop.push_back({diem, p});
         }
+        stable_sort(khop.begin(), khop.end(), [](const pair<int, NhanVien*>& a, const pair<int, NhanVien*>& b) { return a.first > b.first; });
+        vector<NhanVien*> kq;
+        for (auto& x : khop) kq.push_back(x.second);
         return kq;
     }
 

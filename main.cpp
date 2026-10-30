@@ -117,16 +117,27 @@ int main()
         }
         else if (c == 5)
         {
-            string tk = UI::docChuoi("\n  Tìm tất cả nhân viên liên quan đến từ khóa: ");
-            auto kq = ql.timTheoTuKhoa(tk);
-            if (kq.empty()) cout << UI::DO << "\n  ! Không có kết quả.\n" << UI::RESET;
-            else ql.inBang(kq, "KẾT QUẢ TÌM KIẾM");
+            cout << "\n  " << UI::VANG << "** TÌM NHÂN VIÊN THEO TỪ KHÓA **" << UI::RESET << "\n";
+            cout << UI::XAM << "  Gõ có dấu hoặc không dấu đều được, nhiều từ cách nhau bằng khoảng trắng. ESC để hủy." << UI::RESET << "\n\n";
+            UI::dangNhapNhanVien = true; // để ESC hủy việc nhập từ khóa
+            UI::huyNhapNhanVien = false;
+            string tk = UI::docChuoi("  Từ khóa: ");
+            bool huy = UI::huyNhapNhanVien;
+            UI::dangNhapNhanVien = false;
+            UI::huyNhapNhanVien = false;
+            if (huy) cout << UI::VANG << "\n  Đã hủy tìm kiếm.\n" << UI::RESET;
+            else
+            {
+                auto kq = ql.timTheoTuKhoa(tk);
+                if (kq.empty()) cout << UI::DO << "\n  ! Không có kết quả.\n" << UI::RESET;
+                else ql.inBang(kq, "KẾT QUẢ TÌM KIẾM");
+            }
             UI::tamDung();
         }
         else if (c == 6)
         {
             ql.sapXepLuongGiam();
-            ql.inTatCa();
+            ql.inTatCa(false);
             UI::tamDung();
         }
         else if (c == 7)
