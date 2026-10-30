@@ -42,7 +42,7 @@ void themNhanVien(DanhSachNhanVien& ql, const string& tieuDe)
         return;
     }
     ql.them(p);
-    cout << UI::XANH << "\n  ✓ Đã thêm: " << *p << UI::RESET << "\n";
+    cout << UI::HONG << "\n  ✓ Đã thêm: " << *p << UI::RESET << "\n";
     UI::dangNhapNhanVien = false;
     UI::huyNhapNhanVien = false;
     UI::tamDung();
@@ -61,7 +61,7 @@ string hoiTenFile(const string& tieuDe)
     return s.empty() ? FILE_MAC_DINH : s;
 }
 
-int main() 
+int main()
 {
     UI::khoiTao();
     DanhSachNhanVien ql;
@@ -89,7 +89,7 @@ int main()
         "Thoát"
     };
 
-    while (true) 
+    while (true)
     {
         string phu = "Tháng " + to_string(ql.getThang()) + " | Số nhân viên: " + to_string(ql.soLuong());
         int c = UI::chonMenu("QUẢN LÝ NHÂN SỰ", phu, menu);
@@ -98,79 +98,79 @@ int main()
         if (c == 0) themNhanVien<NhanVienVanPhong>(ql, "THÊM NHÂN VIÊN VĂN PHÒNG");
         else if (c == 1) themNhanVien<NhanVienSanXuat>(ql, "THÊM NHÂN VIÊN SẢN XUẤT");
         else if (c == 2) themNhanVien<QuanLy>(ql, "THÊM QUẢN LÝ");
-        else if (c == 3) 
+        else if (c == 3)
         {
             ql.inTatCa();
             UI::tamDung();
-        } 
-        else if (c == 4) 
+        }
+        else if (c == 4)
         {
             string ma = UI::docChuoi("\n  Nhập mã nhân viên: ");
             NhanVien* p = ql.timTheoMa(ma);
             if (!p) cout << UI::DO << "\n  ! Không tìm thấy nhân viên.\n" << UI::RESET;
-            else 
+            else
             {
                 cout << "\n  " << UI::VANG << "** THÔNG TIN NHÂN VIÊN **" << UI::RESET << "\n\n";
                 p->hienThiThongTin(ql.getThang()); // đa hình
             }
             UI::tamDung();
-        } 
-        else if (c == 5) 
+        }
+        else if (c == 5)
         {
             string tk = UI::docChuoi("\n  Tìm tất cả nhân viên liên quan đến từ khóa: ");
             auto kq = ql.timTheoTuKhoa(tk);
             if (kq.empty()) cout << UI::DO << "\n  ! Không có kết quả.\n" << UI::RESET;
             else ql.inBang(kq, "KẾT QUẢ TÌM KIẾM");
             UI::tamDung();
-        } 
-        else if (c == 6) 
+        }
+        else if (c == 6)
         {
             ql.sapXepLuongGiam();
             ql.inTatCa();
             UI::tamDung();
-        } 
-        else if (c == 7) 
+        }
+        else if (c == 7)
         {
             string ma = UI::docChuoi("\n  Nhập mã nhân viên cần xóa: ");
             string LyDo = UI::docChuoi("\n  Nhập lý do xóa nhân viên: ");
-            if (ql.xoa(ma, LyDo)) 
+            if (ql.xoa(ma, LyDo))
             {
-                cout << UI::XANH << "\n  ✓ Đã xóa.\n"  << "\n Lý Do: " << LyDo  << "\n" << UI::RESET;
+                cout << UI::HONG << "\n  ✓ Đã xóa.\n"  << "\n Lý Do: " << LyDo  << "\n" << UI::RESET;
             }
             else cout << UI::DO << "\n  ! Không tìm thấy nhân viên.\n" << UI::RESET;
             UI::tamDung();
-        } 
-        
+        }
+
         else if (c == 8)
         {
             ql.xemLichSuXoa();
             UI::tamDung();
         }
-        else if (c == 9) 
+        else if (c == 9)
         {
             ql.thongKe();
             UI::tamDung();
-        } 
-        else if (c == 10) 
+        }
+        else if (c == 10)
         {
             ql.setThang((int)UI::docSo("\n  Nhập tháng mới (1-12): ", 1, 12));
-        } 
-        else if (c == 11) 
+        }
+        else if (c == 11)
         {
             if (ql.timTheoMa("VP01")) cout << UI::DO << "\n  ! Dữ liệu mẫu đã được nạp rồi.\n" << UI::RESET;
-            else 
+            else
             {
                 ql.napMau();
-                cout << UI::XANH << "\n  ✓ Đã nạp 5 nhân viên mẫu.\n" << UI::RESET;
+                cout << UI::HONG << "\n  ✓ Đã nạp 5 nhân viên mẫu.\n" << UI::RESET;
             }
             UI::tamDung();
-        } 
+        }
         else if (c == 12)
         {
             string f = hoiTenFile("Lưu ra file");
             if (!f.empty())
             {
-                if (ql.luuFile(f)) cout << UI::XANH << "\n  ✓ Đã lưu " << ql.soLuong() << " nhân viên vào \"" << f << "\".\n" << UI::RESET;
+                if (ql.luuFile(f)) cout << UI::HONG << "\n  ✓ Đã lưu " << ql.soLuong() << " nhân viên vào \"" << f << "\".\n" << UI::RESET;
                 else cout << UI::DO << "\n  ! Không thể ghi file \"" << f << "\".\n" << UI::RESET;
             }
             UI::tamDung();
@@ -185,7 +185,7 @@ int main()
                     cout << UI::DO << "\n  ! Không mở được file \"" << f << "\" (chưa có file? hãy lưu trước).\n" << UI::RESET;
                 else
                 {
-                    cout << UI::XANH << "\n  ✓ Đã nạp " << them << " nhân viên từ \"" << f << "\".\n" << UI::RESET;
+                    cout << UI::HONG << "\n  ✓ Đã nạp " << them << " nhân viên từ \"" << f << "\".\n" << UI::RESET;
                     if (trung) cout << UI::VANG << "  ! Bỏ qua " << trung << " nhân viên trùng mã.\n" << UI::RESET;
                     if (loi) cout << UI::DO << "  ! Bỏ qua " << loi << " dòng sai định dạng.\n" << UI::RESET;
                 }

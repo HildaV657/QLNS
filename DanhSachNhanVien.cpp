@@ -17,7 +17,7 @@ string layNgayXoa()
     return ss.str();
 }
 
-class DanhSachNhanVien 
+class DanhSachNhanVien
 {
     vector<NhanVien*> ds;
     int thang;
@@ -25,7 +25,7 @@ class DanhSachNhanVien
     // độ rộng các cột của bảng
     const vector<int> W = {5, 8, 24, 12, 12, 16};
 
-    void vienNgang(const string& l, const string& g, const string& r) const 
+    void vienNgang(const string& l, const string& g, const string& r) const
     {
         cout << UI::TRANG << l;
         for (size_t i = 0; i < W.size(); i++) cout << UI::lap("─", W[i] + 2) << (i + 1 < W.size() ? g : r);
@@ -33,7 +33,7 @@ class DanhSachNhanVien
     }
 
     // Mỗi ô căn lề trái, nằm gọn trong khung
-    void dongBang(const vector<string>& o, const string& mau) const 
+    void dongBang(const vector<string>& o, const string& mau) const
     {
         for (size_t i = 0; i < W.size(); i++)
             cout << UI::TRANG << "│ " << mau << UI::can(o[i], W[i]) << UI::TRANG << " ";
@@ -42,12 +42,12 @@ class DanhSachNhanVien
 
 public:
     DanhSachNhanVien(int t = 1) : thang(t) {}
-    DanhSachNhanVien(const DanhSachNhanVien& o) : thang(o.thang) 
+    DanhSachNhanVien(const DanhSachNhanVien& o) : thang(o.thang)
     {
         for (auto p : o.ds) ds.push_back(p->clone()); // sao chép sâu
     }
     DanhSachNhanVien& operator=(const DanhSachNhanVien&) = delete;
-    ~DanhSachNhanVien() 
+    ~DanhSachNhanVien()
     {
         for (auto p : ds) delete p;
     }
@@ -56,7 +56,7 @@ public:
     void setThang(int t) { thang = t; }
     int soLuong() const { return ds.size(); }
 
-    NhanVien* timTheoMa(const string& ma) const 
+    NhanVien* timTheoMa(const string& ma) const
     {
         for (auto p : ds) if (UI::thuong(p->getMaNV()) == UI::thuong(ma)) return p;
         return nullptr;
@@ -64,7 +64,7 @@ public:
 
     void them(NhanVien* p) { ds.push_back(p); }
     //XOA NHAN VIEN
-    
+
 bool xoa(const string& ma, const string& LyDo)
 {
     for (auto it = ds.begin(); it != ds.end(); ++it)
@@ -146,11 +146,11 @@ void xemLichSuXoa() const
     file.close();
 }
 
-    vector<NhanVien*> timTheoTuKhoa(const string& tk) const 
+    vector<NhanVien*> timTheoTuKhoa(const string& tk) const
     {
         vector<NhanVien*> kq;
         string k = UI::thuong(tk);
-        for (auto p : ds) 
+        for (auto p : ds)
         {
             string gop = UI::thuong(p->getMaNV() + " " + p->getHoTen() + " " + p->loaiNV() + " " + p->getDiaChi());
             if (gop.find(k) != string::npos) kq.push_back(p);
@@ -158,28 +158,28 @@ void xemLichSuXoa() const
         return kq;
     }
 
-    void sapXepLuongGiam() 
+    void sapXepLuongGiam()
     {
         stable_sort(ds.begin(), ds.end(), [](NhanVien* a, NhanVien* b) { return a->tinhLuong() > b->tinhLuong(); });
     }
 
-    double tongLuong() const 
+    double tongLuong() const
     {
         double s = 0;
         for (auto p : ds) s += p->tinhLuong();
         return s;
     }
 
-    void inBang(const vector<NhanVien*>& v, const string& tieuDe) const 
+    void inBang(const vector<NhanVien*>& v, const string& tieuDe) const
     {
         cout << "\n  " << UI::VANG << "** " << tieuDe << " - THÁNG " << thang << " **" << UI::RESET << "\n\n";
         vienNgang("┌", "┬", "┐");
         dongBang({"STT", "Mã NV", "Họ và tên", "Loại", "Ngày sinh", "Lương (VNĐ)"}, UI::VANG);
         vienNgang("├", "┼", "┤");
         int stt = 1;
-        for (auto p : v) 
+        for (auto p : v)
         {
-            string mau = p->loaiNV() == "Quản lý" ? UI::TIM : p->loaiNV() == "Sản xuất" ? UI::XANH : UI::CYAN;
+            string mau = p->loaiNV() == "Quản lý" ? UI::TIM : p->loaiNV() == "Sản xuất" ? UI::HONG : UI::BE;
             dongBang({to_string(stt++), p->getMaNV(), p->getHoTen(), p->loaiNV(),
                       p->getNgaySinh().toString(), UI::tien(p->tinhLuong())}, mau);
         }
@@ -187,25 +187,42 @@ void xemLichSuXoa() const
         cout << UI::XAM << "  Tổng: " << v.size() << " nhân viên" << UI::RESET << "\n";
     }
 
-    void inTatCa() const { inBang(ds, "DANH SÁCH NHÂN VIÊN"); }
+    // Thứ tự hiển thị theo loại: Quản lý -> Văn phòng -> Sản xuất
+    static int thuTuLoai(const NhanVien* p)
+    {
+        string l = p->loaiNV();
+        if (l == "Quản lý") return 0;
+        if (l == "Văn phòng") return 1;
+        return 2;
+    }
 
-    void thongKe() const 
+    // nhomTheoLoai = true: gom nhóm QL -> VP -> SX (trong mỗi nhóm giữ nguyên thứ tự hiện có)
+    // nhomTheoLoai = false: in đúng thứ tự đang lưu (dùng khi vừa sắp xếp theo lương)
+    void inTatCa(bool nhomTheoLoai = true) const
+    {
+        vector<NhanVien*> v = ds;
+        if (nhomTheoLoai)
+            stable_sort(v.begin(), v.end(), [](NhanVien* a, NhanVien* b) { return thuTuLoai(a) < thuTuLoai(b); });
+        inBang(v, "DANH SÁCH NHÂN VIÊN");
+    }
+
+    void thongKe() const
     {
         cout << "\n  " << UI::VANG << "** THỐNG KÊ THÁNG " << thang << " **" << UI::RESET << "\n\n";
         int vp = 0, sx = 0, ql = 0;
         const NhanVien* max = nullptr;
-        for (auto p : ds) 
+        for (auto p : ds)
         {
             string l = p->loaiNV();
             if (l == "Văn phòng") vp++; else if (l == "Sản xuất") sx++; else ql++;
             if (!max || p->tinhLuong() > max->tinhLuong()) max = p;
         }
         UI::dong("Tổng số nhân viên", to_string(ds.size()));
-        UI::dong("Văn phòng", to_string(vp), UI::CYAN);
-        UI::dong("Sản xuất", to_string(sx), UI::XANH);
+        UI::dong("Văn phòng", to_string(vp), UI::BE);
+        UI::dong("Sản xuất", to_string(sx), UI::HONG);
         UI::dong("Quản lý", to_string(ql), UI::TIM);
-        UI::dong("Tổng quỹ lương", UI::tien(tongLuong()) + " VNĐ", UI::XANH);
-        if (!ds.empty()) 
+        UI::dong("Tổng quỹ lương", UI::tien(tongLuong()) + " VNĐ", UI::HONG);
+        if (!ds.empty())
         {
             UI::dong("Lương trung bình", UI::tien(tongLuong() / ds.size()) + " VNĐ");
             UI::dong("Lương cao nhất", max->getHoTen() + " - " + UI::tien(max->tinhLuong()) + " VNĐ");
@@ -214,18 +231,19 @@ void xemLichSuXoa() const
 
     // ================= LƯU / ĐỌC FILE TXT =================
     // Mỗi nhân viên 1 dòng, các trường cách nhau bằng TAB:
-    //   VP <mã> <tên> <d/m/yyyy> <địa chỉ> <số ngày> <đơn giá ngày> <giờ OT> <hệ số OT>
+    //   VP <mã> <tên> <d/m/yyyy> <địa chỉ> <số ngày> <số ngày nghỉ> <đơn giá ngày> <giờ OT> <hệ số OT>
     //   SX <mã> <tên> <d/m/yyyy> <địa chỉ> <số SP> <đơn giá SP> <đơn giá vượt>
-    //   QL <mã> <tên> <d/m/yyyy> <địa chỉ> <lương cơ bản> <lương trách nhiệm>
+    //   QL <mã> <tên> <d/m/yyyy> <địa chỉ> <lương cơ bản> <lương trách nhiệm> <số ngày nghỉ>
+    // (file cũ chưa có "số ngày nghỉ" vẫn đọc được, mặc định 0)
     // Dòng trống hoặc bắt đầu bằng '#' sẽ bị bỏ qua.
     bool luuFile(const string& duongDan) const
     {
         ofstream f(duongDan, ios::trunc);
         if (!f.is_open()) return false;
         f << "# QLNS - danh sach nhan vien (cac truong cach nhau bang TAB, luu UTF-8)\n";
-        f << "# VP: ma, ten, ngay sinh, dia chi, so ngay, don gia ngay, gio OT, he so OT\n";
+        f << "# VP: ma, ten, ngay sinh, dia chi, so ngay, so ngay nghi, don gia ngay, gio OT, he so OT\n";
         f << "# SX: ma, ten, ngay sinh, dia chi, so SP, don gia SP, don gia vuot\n";
-        f << "# QL: ma, ten, ngay sinh, dia chi, luong co ban, luong trach nhiem\n";
+        f << "# QL: ma, ten, ngay sinh, dia chi, luong co ban, luong trach nhiem, so ngay nghi\n";
         for (auto p : ds) f << p->ghiFile() << '\n';
         f.flush();
         return (bool)f;
@@ -277,12 +295,22 @@ private:
             if (!docSoThuc(f[i], v)) return nullptr;
             x.push_back(v);
         }
-        if (loai == "VP" && f.size() == 9 && x[0] <= 31 && x[0] == floor(x[0]) && x[3] >= 1)
-            return new NhanVienVanPhong(ma, ten, ns, dc, (int)x[0], x[1], x[2], x[3]);
+        if (loai == "VP" && (f.size() == 9 || f.size() == 10))
+        {
+            bool coNghi = f.size() == 10; // file cũ (9 trường) không có số ngày nghỉ
+            double nghi = coNghi ? x[1] : 0;
+            size_t k = coNghi ? 2 : 1;    // vị trí của đơn giá ngày
+            if (x[0] > 31 || x[0] != floor(x[0]) || nghi > 31 || nghi != floor(nghi) || x[k + 2] < 1) return nullptr;
+            return new NhanVienVanPhong(ma, ten, ns, dc, (int)x[0], (int)nghi, x[k], x[k + 1], x[k + 2]);
+        }
         if (loai == "SX" && f.size() == 8 && x[0] == floor(x[0]))
             return new NhanVienSanXuat(ma, ten, ns, dc, (int)x[0], x[1], x[2]);
-        if (loai == "QL" && f.size() == 7)
-            return new QuanLy(ma, ten, ns, dc, x[0], x[1]);
+        if (loai == "QL" && (f.size() == 7 || f.size() == 8))
+        {
+            double nghi = f.size() == 8 ? x[2] : 0;
+            if (nghi > 31 || nghi != floor(nghi)) return nullptr;
+            return new QuanLy(ma, ten, ns, dc, x[0], x[1], (int)nghi);
+        }
         return nullptr;
     }
 
@@ -315,10 +343,10 @@ public:
         return true;
     }
 
-    void napMau() 
+    void napMau()
     {
-        them(new NhanVienVanPhong("VP01", "Nguyễn Thành Thông", Ngay(7, 4, 1997), "Quận 5, TP.HCM", 26, 400000, 10));
-        them(new NhanVienVanPhong("VP02", "Lê Tuấn Khải", Ngay(9, 3, 1998), "Thủ Đức, TP.HCM", 24, 350000, 5));
+        them(new NhanVienVanPhong("VP01", "Nguyễn Thành Thông", Ngay(7, 4, 1997), "Quận 5, TP.HCM", 26, 0, 400000, 10));
+        them(new NhanVienVanPhong("VP02", "Lê Tuấn Khải", Ngay(9, 3, 1998), "Thủ Đức, TP.HCM", 24, 0, 350000, 5));
         them(new NhanVienSanXuat("SX01", "Đỗ Nguyên Khang", Ngay(11, 3, 1998), "Bình Dương", 45, 50000, 75000));
         them(new NhanVienSanXuat("SX02", "Nguyễn Huỳnh Đức", Ngay(4, 5, 1998), "Quận 12, TP.HCM", 80, 50000, 75000));
         them(new QuanLy("QL01", "Châu Thị Ngọc", Ngay(2, 1, 1997), "Quận 3, TP.HCM", 12000000, 3000000));

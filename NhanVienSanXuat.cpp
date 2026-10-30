@@ -3,7 +3,7 @@
 #include "NhanVien.cpp"
 using namespace std;
 
-class NhanVienSanXuat : public NhanVien 
+class NhanVienSanXuat : public NhanVien
 {
     int soSanPham;
     double donGiaSP;     // đơn giá cho sản phẩm trong định mức
@@ -46,7 +46,7 @@ public:
         donGiaVuot = UI::docSo("Đơn giá sản phẩm từ 51 trở đi: ", 0);
         if (UI::huyNhapNhanVien) return;
     }
-    void hienThiThongTin(int thang) const override 
+    void hienThiThongTin(int thang) const override
     {
         NhanVien::hienThiThongTin(thang);
         UI::dong("Tổng số sản phẩm", to_string(soSanPham));
