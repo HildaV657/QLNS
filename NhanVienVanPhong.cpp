@@ -62,12 +62,12 @@ public:
     {
         NhanVien::hienThiThongTin(thang);
         UI::dong("Số ngày làm việc", to_string(soNgayLamViec));
+        UI::dong("Số ngày nghỉ", to_string(soNgayNghi));
         UI::dong("Đơn giá ngày", UI::tien(donGiaNgay) + " VNĐ");
-        UI::dong("Lương cứng", UI::tien(luongCung()) + " VNĐ");
         ostringstream os;
         os << soGioOT << " giờ x " << heSoOT << " = " << UI::tien(luongOT()) << " VNĐ";
+        UI::dong("Lương cứng", UI::tien(luongCung()) + " VNĐ");
         UI::dong("Tiền OT", os.str());
-        UI::dong("Số ngày nghỉ", to_string(soNgayNghi));
         UI::dong("Phạt nghỉ vượt phép", UI::tien(tienPhatNghi()) + " VNĐ");
         inLuong(thang);
     }
