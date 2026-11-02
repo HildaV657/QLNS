@@ -10,7 +10,7 @@ class NhanVienVanPhong : public NhanVien
     double donGiaNgay;
     double soGioOT;
     double heSoOT;
-    static const int GIO_CHUAN = 8; // 1 ngày công = 8 giờ
+    static const int GIO_CHUAN = 8;
 public:
     NhanVienVanPhong(const string& ma = "ma nhan vien", const string& ten = "ho ten", const Ngay& ns = Ngay(), const string& dc = "dia chi", int ngay = 0, int nghi = 0, double donGia = 0, double ot = 0, double heSo = 1.5)
         : NhanVien(ma, ten, ns, dc), soNgayLamViec(ngay), soNgayNghi(nghi), donGiaNgay(donGia), soGioOT(ot), heSoOT(heSo) {}
