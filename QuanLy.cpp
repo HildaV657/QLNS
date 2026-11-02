@@ -26,11 +26,6 @@ public:
         return luongCoBan + luongTrachNhiem;
     }
     string loaiNV() const {return "Quản lý";}
-    NhanVien* clone() const {return new QuanLy(*this);}
-    string ghiFile() const
-    {
-        return ghiChung("QL") + "\t" + so(luongCoBan) + "\t" + so(luongTrachNhiem) + "\t" + to_string(soNgayNghi);
-    }
 
     void nhap()
     {
@@ -44,7 +39,7 @@ public:
         if (UI::huyNhapNhanVien) return;
     }
 
-    void hienThiThongTin(int thang) const override
+    void hienThiThongTin(int thang) const
     {
         NhanVien::hienThiThongTin(thang);
         UI::dong("Lương cơ bản", UI::tien(luongCoBan) + " VNĐ");
