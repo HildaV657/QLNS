@@ -1,4 +1,3 @@
-// NhanVienSanXuat: lương theo sản phẩm, vượt 50 thì giá khác
 #pragma once
 #include "NhanVien.cpp"
 using namespace std;
