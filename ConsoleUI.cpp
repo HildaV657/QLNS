@@ -57,6 +57,23 @@ namespace UI
         return kq + string(w - n, ' ');
     }
 
+    // Căn giữa
+    inline string giua(const string& s, int w)
+    {
+        int n = doRong(s);
+        if (n >= w) return can(s, w);
+        int trai = (w - n) / 2;
+        int phai = w - n - trai;
+        return string(trai, ' ') + s + string(phai, ' ');
+    }
+
+    inline string phai(const string& s, int w)
+    {
+        int n = doRong(s);
+        if (n >= w) return s;
+        return string(w - n, ' ') + s;
+    }
+
     inline string lap(const string& s, int n)
     {
         string kq;
