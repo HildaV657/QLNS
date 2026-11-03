@@ -20,11 +20,16 @@ class DanhSachNhanVien
         cout << UI::RESET << "\n";
     }
 
-    // căn lề trái trong bảng
-    void dongBang(const vector<string>& o, const string& mau) const
+    // Căn giữa các cột, riêng dữ liệu lương căn phải
+    void dongBang(const vector<string>& o, const string& mau,bool dongTieuDe = false) const
     {
         for (int i = 0; i < W.size(); i++)
-            cout << UI::TRANG << "│ " << mau << UI::can(o[i], W[i]) << UI::TRANG << " ";
+        {
+            cout << UI::TRANG << "│ " << mau;
+            if (i == 5 && !dongTieuDe) cout << UI::phai(o[i], W[i]);
+            else cout << UI::giua(o[i], W[i]);
+            cout << UI::TRANG << " ";
+        }
         cout << "│" << UI::RESET << "\n";
     }
 
@@ -99,7 +104,7 @@ public:
     {
         cout << "\n  " << UI::VANG << "** DANH SÁCH NHÂN VIÊN - THÁNG " << thang << " **" << UI::RESET << "\n\n";
         vienNgang("┌", "┬", "┐");
-        dongBang({"STT", "Mã NV", "Họ và tên", "Loại", "Ngày sinh", "Lương (VNĐ)"}, UI::VANG);
+        dongBang({"STT", "Mã NV", "Họ và tên", "Loại", "Ngày sinh", "Lương (VNĐ)"}, UI::VANG, true);
         vienNgang("├", "┼", "┤");
         for (int i = 0; i < ds.size(); i++)
         {
