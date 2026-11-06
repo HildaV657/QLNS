@@ -9,10 +9,10 @@ class NhanVienVanPhong : public NhanVien
     double donGiaNgay;
     double soGioOT;
     double heSoOT;
-    static const int GIO_CHUAN = 8;
+    const int GIO_CHUAN = 8;
 public:
-    NhanVienVanPhong(const string& ma = "ma nhan vien", const string& ten = "ho ten", const Ngay& ns = Ngay(), const string& dc = "dia chi", int ngay = 0, int nghi = 0, double donGia = 0, double ot = 0, double heSo = 1.5)
-        : NhanVien(ma, ten, ns, dc), soNgayLamViec(ngay), donGiaNgay(donGia), soGioOT(ot), heSoOT(heSo) {}
+    NhanVienVanPhong(const string& ma = "ma nhan vien", const string& ten = "ho ten", const Ngay& ns = Ngay(), const string& dc = "dia chi", int ngay = 0, double donGia = 0, double ot = 0, double heSo = 1.5)
+    : NhanVien(ma, ten, ns, dc), soNgayLamViec(ngay), donGiaNgay(donGia), soGioOT(ot), heSoOT(heSo) {}
     NhanVienVanPhong(const NhanVienVanPhong& o)
         : NhanVien(o), soNgayLamViec(o.soNgayLamViec), donGiaNgay(o.donGiaNgay), soGioOT(o.soGioOT), heSoOT(o.heSoOT) {}
     ~NhanVienVanPhong() {}
@@ -39,9 +39,9 @@ public:
         if (UI::huyNhapNhanVien) return;
         donGiaNgay = UI::docSo("Đơn giá ngày (VNĐ): ", 0);
         if (UI::huyNhapNhanVien) return;
-        soGioOT = UI::docSo("Số giờ OT: ", 0);
+        soGioOT = UI::docSo("Số giờ OT (0-40): ", 0, 40);
         if (UI::huyNhapNhanVien) return;
-        heSoOT = UI::docSo("Hệ số OT (vd 1.5): ", 1);
+        heSoOT = UI::docSo("Hệ số OT (tối thiểu 1.5): ", 1.5);
         if (UI::huyNhapNhanVien) return;
     }
 
