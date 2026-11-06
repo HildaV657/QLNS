@@ -20,7 +20,6 @@ class DanhSachNhanVien
         cout << UI::RESET << "\n";
     }
 
-    // Căn giữa các cột, riêng dữ liệu lương căn phải
     void dongBang(const vector<string>& o, const string& mau,bool dongTieuDe = false) const
     {
         for (int i = 0; i < W.size(); i++)
@@ -33,7 +32,6 @@ class DanhSachNhanVien
         cout << "│" << UI::RESET << "\n";
     }
 
-    // sắp xếp lương giảm dần
     void quickSort(int l, int r)
     {
         int i = l, j = r;
@@ -61,11 +59,20 @@ public:
         for (int i = 0; i < ds.size(); i++) delete ds[i];
     }
 
-    int getThang() const { return thang; }
-    void setThang(int t) { thang = t; }
-    int soLuong() const { return ds.size(); }
+    int getThang() const {return thang;}
+    void setThang(int t) {thang = t;}
+    int soLuong() const {return ds.size();}
 
-    void them(NhanVien* p) { ds.push_back(p); }
+    void them(NhanVien* p)
+    {
+        if (p->loaiNV() == "Quản lý")
+        {
+            int i = 0;
+            while (i < (int)ds.size() && ds[i]->loaiNV() == "Quản lý") i++;
+            ds.insert(ds.begin() + i, p);
+        }
+        else ds.push_back(p);
+    }
 
     NhanVien* timTheoMa(const string& ma) const
     {
@@ -120,7 +127,7 @@ public:
     {
         cout << "\n  " << UI::VANG << "** THỐNG KÊ THÁNG " << thang << " **" << UI::RESET << "\n\n";
         int vp = 0, sx = 0, ql = 0;
-        NhanVien* cao = nullptr; // nhân viên lương cao nhất
+        NhanVien* cao = nullptr;
         for (int i = 0; i < ds.size(); i++)
         {
             string l = ds[i]->loaiNV();
@@ -143,8 +150,8 @@ public:
 
     void napMau()
     {
-        them(new NhanVienVanPhong("VP01", "Nguyễn Thành Thông", Ngay(7, 4, 1997), "Quận 5, TP.HCM", 26, 0, 400000, 10));
-        them(new NhanVienVanPhong("VP02", "Lê Tuấn Khải", Ngay(9, 3, 1998), "Thủ Đức, TP.HCM", 24, 0, 350000, 5));
+        them(new NhanVienVanPhong("VP01", "Nguyễn Thành Thông", Ngay(7, 4, 1997), "Quận 5, TP.HCM", 26, 400000, 10));
+        them(new NhanVienVanPhong("VP02", "Lê Tuấn Khải", Ngay(9, 3, 1998), "Thủ Đức, TP.HCM", 24, 350000, 5));
         them(new NhanVienSanXuat("SX01", "Đỗ Nguyên Khang", Ngay(11, 3, 1998), "Bình Dương", 45, 50000, 75000));
         them(new NhanVienSanXuat("SX02", "Nguyễn Huỳnh Đức", Ngay(4, 5, 1998), "Quận 12, TP.HCM", 80, 50000, 75000));
         them(new QuanLy("QL01", "Châu Thị Ngọc", Ngay(2, 1, 1997), "Quận 3, TP.HCM", 12000000, 3000000));
