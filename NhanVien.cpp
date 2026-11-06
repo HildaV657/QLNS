@@ -30,7 +30,7 @@ public:
     NhanVien(const string& _ma = "ma nhan vien", const string& _ten = "ho ten", const Ngay& _ns = Ngay(), const string& _dc = "dia chi")
         : maNV(_ma), hoTen(_ten), diaChi(_dc), ngaySinh(_ns) {}
     NhanVien(const NhanVien& o) : maNV(o.maNV), hoTen(o.hoTen), diaChi(o.diaChi), ngaySinh(o.ngaySinh) {}
-    ~NhanVien() {}
+    virtual ~NhanVien() {}
 
     virtual double tinhLuong() const = 0;
     virtual string loaiNV() const = 0;
