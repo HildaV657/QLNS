@@ -1,4 +1,3 @@
-// QuanLy: lương cơ bản + lương trách nhiệm
 #pragma once
 #include "NhanVien.cpp"
 using namespace std;
@@ -15,16 +14,24 @@ public:
     void setLuongCoBan(double x) {luongCoBan = x;}
     void setLuongTrachNhiem(double x) {luongTrachNhiem = x;}
     void setSoNgayNghi(int x) {soNgayNghi = x;}
-    QuanLy(const string& ma = "", const string& ten = "", const Ngay& ns = Ngay(), const string& dc = "", double lcb = 0, double ltn = 0, int soNgayNghi = 0)
+    QuanLy(const string& ma = "ma nhan vien", const string& ten = "ho ten", const Ngay& ns = Ngay(), const string& dc = "dia chi", double lcb = 0, double ltn = 0, int soNgayNghi = 0)
         : NhanVien(ma, ten, ns, dc), luongCoBan(lcb), luongTrachNhiem(ltn), soNgayNghi(soNgayNghi) {}
     QuanLy(const QuanLy& o) : NhanVien(o), luongCoBan(o.luongCoBan), luongTrachNhiem(o.luongTrachNhiem), soNgayNghi(o.soNgayNghi) {}
     ~QuanLy() {}
 
+    double tienPhat() const
+    {
+        if (soNgayNghi <= 1) return 0;
+        if (soNgayNghi == 2) return luongTrachNhiem * 0.25;
+        if (soNgayNghi == 3) return luongTrachNhiem * 0.5;
+        return luongTrachNhiem;
+    }
+
     double tinhLuong() const
     {
-        if (soNgayNghi > 1) {return luongCoBan + luongTrachNhiem * 0.5;}
-        return luongCoBan + luongTrachNhiem;
+        return luongCoBan + luongTrachNhiem - tienPhat();
     }
+
     string loaiNV() const {return "Quản lý";}
 
     void nhap()
@@ -45,29 +52,7 @@ public:
         UI::dong("Lương cơ bản", UI::tien(luongCoBan) + " VNĐ");
         UI::dong("Lương trách nhiệm", UI::tien(luongTrachNhiem) + " VNĐ");
         UI::dong("Số ngày nghỉ", to_string(soNgayNghi) + " ngày");
-
-        if (soNgayNghi > 1)
-        {
-            if (soNgayNghi == 2){
-                UI::dong("Tiền phạt",
-                UI::tien(luongTrachNhiem * 0.25) + " VNĐ");
-            }
-            if (soNgayNghi == 3){
-                UI::dong("Tiền phạt",
-                UI::tien(luongTrachNhiem * 0.5) + " VNĐ");
-            }
-            if (soNgayNghi == 4)
-                UI::dong("Tiền phạt", "0 VNĐ");
-            if (soNgayNghi > 4){
-                UI::dong("Tiền phạt",
-                UI::tien(luongCoBan - (soNgayNghi * luongTrachNhiem)) + " VNĐ");
-            }
-        }
-        else
-        {
-            UI::dong("Tiền phạt", "0 VNĐ");
-        }
-
+        UI::dong("Tiền phạt", UI::tien(tienPhat()) + " VNĐ");
         inLuong(thang);
     }
 };
