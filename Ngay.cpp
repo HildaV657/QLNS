@@ -19,35 +19,28 @@ public:
     Ngay(int _d = 1, int _m = 1, int _y = 2000) : d(_d), m(_m), y(_y) {}
     Ngay(const Ngay& o) : d(o.d), m(o.m), y(o.y) {}
     ~Ngay() {}
-    
-    Ngay& operator = (const Ngay& o){
-        d = o.d;
-        m = o.m;
-        y = o.y;
-        return *this;
-    }
 
-    static Ngay homNay(){
+    Ngay homNay(){
         time_t t = time(nullptr);
         tm* lt = localtime(&t);
         return Ngay(lt->tm_mday, lt->tm_mon + 1, lt->tm_year + 1900);
     }
 
-    static int soSanh(int d1, int m1, int y1, int d2, int m2, int y2){
+    int soSanh(int d1, int m1, int y1, int d2, int m2, int y2){
         if (y1 != y2) return y1 < y2 ? -1 : 1;
         if (m1 != m2) return m1 < m2 ? -1 : 1;
         if (d1 != d2) return d1 < d2 ? -1 : 1;
         return 0;
     }
 
-    static const int TUOI_TOI_THIEU = 18;
+    const int TUOI_TOI_THIEU = 18;
 
-    static Ngay ngaySinhMuonNhat(){
+    Ngay ngaySinhMuonNhat(){
         Ngay h = homNay();
         return Ngay(h.d, h.m, h.y - TUOI_TOI_THIEU);
     }
 
-    static bool hopLe(int d, int m, int y){
+    bool hopLe(int d, int m, int y){
         if (y < 1900 || m < 1 || m > 12 || d < 1) return false;
         int ngay[] = {31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
         if ((y % 4 == 0 && y % 100 != 0) || y % 400 == 0) ngay[1] = 29;
@@ -58,12 +51,12 @@ public:
     string toString() const {return to_string(d) + "/" + to_string(m) + "/" + to_string(y);}
     friend ostream& operator<<(ostream& os, const Ngay& n) {return os << n.toString(); }
 
-    static Ngay doc(const string& nhan){
+    Ngay doc(const string& nhan){
         while (true){
             cout << UI::BE << nhan << UI::RESET;
             string s;
             getline(cin, s);
-            for (auto& c : s) if (c == '/' || c == '-') c = ' ';
+            for (char& c : s) if (c == '/' || c == '-') c = ' ';
             istringstream ss(s);
             int d, m, y;
             if (ss >> d >> m >> y && hopLe(d, m, y)) return Ngay(d, m, y);
