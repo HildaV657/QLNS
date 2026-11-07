@@ -28,8 +28,7 @@ public:
     double tinhLuong() const {return spTrongDinhMuc() * donGiaSP + spVuotDinhMuc() * donGiaVuot;}
     string loaiNV() const {return "Sản xuất";}
 
-
-    void nhap() override
+    void nhap()
     {
         NhanVien::nhap();
         if (UI::huyNhapNhanVien) return;
@@ -40,7 +39,7 @@ public:
         donGiaVuot = UI::docSo("Đơn giá sản phẩm từ 51 trở đi: ", 0);
         if (UI::huyNhapNhanVien) return;
     }
-    void hienThiThongTin(int thang) const override
+    void hienThiThongTin(int thang) const
     {
         NhanVien::hienThiThongTin(thang);
         UI::dong("Tổng số sản phẩm", to_string(soSanPham));
