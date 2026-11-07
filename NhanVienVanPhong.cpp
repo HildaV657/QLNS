@@ -12,7 +12,7 @@ class NhanVienVanPhong : public NhanVien
     const int GIO_CHUAN = 8;
 public:
     NhanVienVanPhong(const string& ma = "ma nhan vien", const string& ten = "ho ten", const Ngay& ns = Ngay(), const string& dc = "dia chi", int ngay = 0, double donGia = 0, double ot = 0, double heSo = 1.5)
-    : NhanVien(ma, ten, ns, dc), soNgayLamViec(ngay), donGiaNgay(donGia), soGioOT(ot), heSoOT(heSo) {}
+        : NhanVien(ma, ten, ns, dc), soNgayLamViec(ngay), donGiaNgay(donGia), soGioOT(ot), heSoOT(heSo) {}
     NhanVienVanPhong(const NhanVienVanPhong& o)
         : NhanVien(o), soNgayLamViec(o.soNgayLamViec), donGiaNgay(o.donGiaNgay), soGioOT(o.soGioOT), heSoOT(o.heSoOT) {}
     ~NhanVienVanPhong() {}
